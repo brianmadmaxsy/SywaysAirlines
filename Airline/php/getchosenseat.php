@@ -4,10 +4,40 @@ session_start();
 
 if(isset($_POST['chooseseatbutton']))
 {
-	$seat=$_POST['seat'];
+	if ($_SESSION['flighttype']=="roundtrip") 
+	{
+		for($counter=1;$counter<=$_SESSION['numofpassengers'];$counter++)
+		{
+			$seat1=$_POST['seat1'.$counter];
+			$seat2=$_POST['seat2'.$counter];
 
-	$_SESSION['seat']=$seat;
+			if($seat1=="")
+			{
+				$seat1="random";
+			}
+			if($seat2=="")
+			{
+				$seat2="random";
+			}
 
-	print_r($_SESSION);
+			$flightreservationnum1=$_SESSION['reservationid1'.$counter];
+			$flightreservationnum2=$_SESSION['reservationid2'.$counter];
+			//echo "<br />".$seat1." ".$seat2;
+
+			require 'connect.php';
+			$stmt = $db->prepare("UPDATE reservation set seat=? where reservationid=?");
+			$stmt->bind_param("ss",$seat1,$flightreservationnum1);
+			$stmt->execute();
+			$db->close();
+
+			require 'connect.php';
+			$stmt2 = $db->prepare("UPDATE reservation set seat=? where reservationid=?");
+			$stmt2->bind_param("ss",$seat2,$flightreservationnum2);
+			$stmt2->execute();
+			$db->close();
+		}
+
+	}
+	
 }
 ?>

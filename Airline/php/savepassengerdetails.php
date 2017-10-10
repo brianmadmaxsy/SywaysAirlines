@@ -7,12 +7,13 @@ if(isset($_POST['continuebutton']))
 	$origin=$_SESSION['origin'];
 	$destination=$_SESSION['destination'];
 	$departuredate=$_SESSION['departuredate'];
-	$returndate=$_SESSION['returndate'];
 	$numofpassengers=$_SESSION['numofpassengers'];
 	$flighttype=$_SESSION['flighttype'];
 
 	if($flighttype=="roundtrip")
 	{
+
+		$returndate=$_SESSION['returndate'];
 		$flight1=$_SESSION['flight1']; //get sessioned flight number of flight1 origin to destination
 		$flight2=$_SESSION['flight2']; //get sessioned flight number of flight2 destination return to origin
 		if($stmt = $db->prepare("SELECT departuretime,arrivaltime,fare from flights WHERE flightnum=?"))
@@ -48,7 +49,22 @@ if(isset($_POST['continuebutton']))
 	elseif ($flighttype=="oneway") 
 	{
 		$flight1=$_SESSION['flight1']; //get sessioned flight number of flight1 origin to destination (no return flight)
+		if($stmt = $db->prepare("SELECT departuretime,arrivaltime,fare from flights WHERE flightnum=?"))
+		{
+			//bind parameters for markers
+			$stmt->bind_param("s",$flight1);
+
+			//execute query
+			$stmt->execute();
+
+			//bind result variables
+			$stmt->bind_result($flight1_departuretime,$flight1_arrivaltime,$flight1_fare);
+			$stmt->fetch();
+			$stmt->close();
+
+		}
 	}
+
 	for($counter=1;$counter<=$_SESSION['numofpassengers'];$counter++)
 	{
 		//echo $_POST['firstname'.$counter]." ".$_POST['lastname'.$counter]." ".$_POST['month'.$counter]." ".$_POST['day'.$counter]." ".$_POST['year'.$counter]." ".$_POST['address'.$counter]." ".$_POST['nationality'.$counter]." ".$_POST['contact'.$counter]." ".$_POST['baggage'.$counter]."<br />";
@@ -63,23 +79,58 @@ if(isset($_POST['continuebutton']))
 
 		$seat="random";
 		$status="reserved";
+		
 		//Insert database (Prepared statement)
 		//i for integer, d for double, s for string, b for BLOB
-		require 'connect.php';
-		$stmt = $db->prepare("INSERT INTO reservation(firstname,lastname,birthday,address,nationality,email,contact,baggage,seat,flighttype,origin,destination,departuredate,flightnumber,departuretime,arrivaltime,fare,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		$stmt->bind_param("ssssssssssssssssss",$firstname,$lastname,$birthday,$address,$nationality,$email,$contact,$baggage,$seat,$flighttype,$origin,$destination,$departuredate,$flight1,$flight1_departuretime,$flight1_arrivaltime,$flight1_fare,$status);
-		$stmt->execute();
-		$db->close();
+		if($flighttype=="roundtrip")
+		{
+			require 'connect.php';
+			$reservationid1=bin2hex(mcrypt_create_iv(10, MCRYPT_DEV_URANDOM));
+			$stmt = $db->prepare("INSERT INTO reservation(reservationid,firstname,lastname,birthday,address,nationality,email,contact,baggage,seat,flighttype,origin,destination,departuredate,flightnumber,departuretime,arrivaltime,fare,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$stmt->bind_param("sssssssssssssssssss",$reservationid1,$firstname,$lastname,$birthday,$address,$nationality,$email,$contact,$baggage,$seat,$flighttype,$origin,$destination,$departuredate,$flight1,$flight1_departuretime,$flight1_arrivaltime,$flight1_fare,$status);
+			$stmt->execute();
+			$db->close();
 
-		require 'connect.php';
-		$stmt2 = $db->prepare("INSERT INTO reservation(firstname,lastname,birthday,address,nationality,email,contact,baggage,seat,flighttype,origin,destination,departuredate,flightnumber,departuretime,arrivaltime,fare,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		$stmt2->bind_param("ssssssssssssssssss",$firstname,$lastname,$birthday,$address,$nationality,$email,$contact,$baggage,$seat,$flighttype,$destination,$origin,$returndate,$flight2,$flight2_departuretime,$flight2_arrivaltime,$flight2_fare,$status);
-		$stmt2->execute();
-		$db->close();
+			$reservationid2=bin2hex(mcrypt_create_iv(10, MCRYPT_DEV_URANDOM));
+			require 'connect.php';
+			$stmt2 = $db->prepare("INSERT INTO reservation(reservationid,firstname,lastname,birthday,address,nationality,email,contact,baggage,seat,flighttype,origin,destination,departuredate,flightnumber,departuretime,arrivaltime,fare,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$stmt2->bind_param("sssssssssssssssssss",$reservationid2,$firstname,$lastname,$birthday,$address,$nationality,$email,$contact,$baggage,$seat,$flighttype,$destination,$origin,$returndate,$flight2,$flight2_departuretime,$flight2_arrivaltime,$flight2_fare,$status);
+			$stmt2->execute();
+			$db->close();
+			
+
+			$_SESSION['reservationid1'.$counter]=$reservationid1;
+			$_SESSION['reservationid2'.$counter]=$reservationid2;
+			$_SESSION['firstname'.$counter]=$firstname;
+			$_SESSION['lastname'.$counter]=$lastname;
+
+			
+			/*
+			echo $reservationid1." ".$firstname." ".$lastname." ".$birthday." ".$address." ".$nationality." ".$email." ".$contact." ".$baggage." ".'random'." ".$flighttype." ".$origin." ".$destination." ".$departuredate." ".$flight1." ".$flight1_departuretime." ".$flight1_arrivaltime." ".$flight1_fare." "."reserved"."<br/>";
+
+			echo $reservationid2." ".$firstname." ".$lastname." ".$birthday." ".$address." ".$nationality." ".$email." ".$contact." ".$baggage." ".'random'." ".$flighttype." ".$destination." ".$origin." ".$returndate." ".$flight2." ".$flight2_departuretime." ".$flight2_arrivaltime." ".$flight2_fare." "."reserved"."<br />";
+			*/
+		}
+		elseif ($flighttype=="oneway") 
+		{
+			require 'connect.php';
+			$reservationid1=bin2hex(mcrypt_create_iv(10, MCRYPT_DEV_URANDOM));
+			$stmt = $db->prepare("INSERT INTO reservation(reservationid,firstname,lastname,birthday,address,nationality,email,contact,baggage,seat,flighttype,origin,destination,departuredate,flightnumber,departuretime,arrivaltime,fare,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$stmt->bind_param("sssssssssssssssssss",$reservationid1,$firstname,$lastname,$birthday,$address,$nationality,$email,$contact,$baggage,$seat,$flighttype,$origin,$destination,$departuredate,$flight1,$flight1_departuretime,$flight1_arrivaltime,$flight1_fare,$status);
+			$stmt->execute();
+			$db->close();
+
+			$_SESSION['reservationid1'.$counter]=$reservationid1;
+			$_SESSION['firstname'.$counter]=$firstname;
+			$_SESSION['lastname'.$counter]=$lastname;
+
+			header("Location: http://localhost/airline/chooseseat.php");
+			exit();
+			//echo $reservationid1." ".$firstname." ".$lastname." ".$birthday." ".$address." ".$nationality." ".$email." ".$contact." ".$baggage." ".'random'." ".$flighttype." ".$origin." ".$destination." ".$departuredate." ".$flight1." ".$flight1_departuretime." ".$flight1_arrivaltime." ".$flight1_fare." "."reserved"."<br/>";
+		}
 		
-		echo $_POST['firstname'.$counter]." ".$_POST['lastname'.$counter]." ".$_POST['month'.$counter]."/".$_POST['day'.$counter]."/".$_POST['year'.$counter]." ".$_POST['address'.$counter]." ".$_POST['nationality'.$counter]." ".$_POST['email'.$counter]." ".$_POST['contact'.$counter]." ".$_POST['baggage'.$counter]." ".'random'." ".$flighttype." ".$origin." ".$destination." ".$departuredate." ".$flight1." ".$flight1_departuretime." ".$flight1_arrivaltime." ".$flight1_fare." "."reserved"."<br/>";
-
-		echo $_POST['firstname'.$counter]." ".$_POST['lastname'.$counter]." ".$_POST['month'.$counter]."/".$_POST['day'.$counter]."/".$_POST['year'.$counter]." ".$_POST['address'.$counter]." ".$_POST['nationality'.$counter]." ".$_POST['email'.$counter]." ".$_POST['contact'.$counter]." ".$_POST['baggage'.$counter]." ".'random'." ".$flighttype." ".$destination." ".$origin." ".$returndate." ".$flight2." ".$flight2_departuretime." ".$flight2_arrivaltime." ".$flight2_fare." "."reserved"."<br />";
 	}
+	header("Location: http://localhost/airline/chooseseat.php");
+	exit();
 }
 ?>
