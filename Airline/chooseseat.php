@@ -66,6 +66,10 @@ session_start();
   <div class="jumbotron" style="height:1000px; background-image: url(images/bg_img.jpg); background-size: 100% auto; background-repeat: repeat-y; margin: 10px auto auto auto;">
     <div class="col-md-2">&nbsp;</div>
     <div class="col-md-8" style="background-color:rgba(10,10,10,0.7); padding:10px; margin: 20px 0px 0px 0px;">
+      <?php
+      if($_SESSION['flighttype']=="roundtrip")
+      {
+      ?>  
         <font color="white"><h3>Choose A Seat</h3></font>
         <form method="post" action="php/getchosenseat.php">
           <div id="exTab1" class="container"> 
@@ -582,6 +586,297 @@ session_start();
                 <div class="col-md-4">&nbsp;</div> 
           </div>
         </form>
+        <?php
+        }
+        
+        elseif($_SESSION['flighttype']=="oneway")
+        {
+        ?>
+        <font color="white"><h3>Choose A Seat</h3></font>
+        <form method="post" action="php/getchosenseat.php">
+          <div id="exTab1" class="container"> 
+              <ul  class="nav nav-pills">
+                <?php
+                $counter=0;
+                while($counter < $_SESSION['numofpassengers'])
+                {
+                  $counter+=1;
+                ?>
+                  <li <?php if($counter==1){ ?> class="active" <?php } ?>>
+                    <a  href="<?php echo "#".$counter."a" ?>" data-toggle="tab"><?php echo $_SESSION['firstname'.$counter]; ?></a>
+                  </li>
+                <?php
+                }
+                ?>
+                
+              </ul>
+
+                <div class="tab-content clearfix" style="height:650px;">
+                  <?php
+              
+                  for($count=1;$count<=$_SESSION['numofpassengers'];$count++)
+                  {
+                    
+                  ?>
+                  <div <?php if($count==1){ ?> class="tab-pane active" <?php } else{ ?> class="tab-pane" <?php } ?> id="<?php echo $count."a" ?>" style="padding:10px;"><!--Round Trip content-->
+                      <div class="col-md-3">
+                        &nbsp;
+                      </div>
+                      <div class="col-md-6">
+                          <font size="4">
+                            <label style="text-transform: uppercase;"><?php echo $_SESSION['origin']; ?></label>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <span class="glyphicon glyphicon-plane"></span>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <span class="glyphicon glyphicon-menu-right"></span>
+                            <label style="text-transform: uppercase;"><?php echo $_SESSION['destination']; ?></label>
+                          </font>
+                          <table class="table table-bordered">
+                            <tr>
+                              <td>
+                                &nbsp;
+                              </td>
+                              <td>
+                                <input type="radio" value="P1" name="<?php echo "seat1".$count; ?>">P1
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="P2" name="<?php echo "seat1".$count; ?>">P2
+                              </td>
+                              <td>
+                                &nbsp;
+                              </td>
+                            </tr>  
+                            <tr>
+                              <td>
+                                <input type="radio" value="A1" name="<?php echo "seat1".$count; ?>">A1
+                              </td>
+                              <td>
+                                <input type="radio" value="A2" name="<?php echo "seat1".$count; ?>">A2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="A3" name="<?php echo "seat1".$count; ?>">A3
+                              </td>
+                              <td>
+                                <input type="radio" value="A4" name="<?php echo "seat1".$count; ?>">A4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="B1" name="<?php echo "seat1".$count; ?>">B1
+                              </td>
+                              <td>
+                                <input type="radio" value="B2" name="<?php echo "seat1".$count; ?>">B2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="B3" name="<?php echo "seat1".$count; ?>">B3
+                              </td>
+                              <td>
+                                <input type="radio" value="B4" name="<?php echo "seat1".$count; ?>">B4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="C1" name="<?php echo "seat1".$count; ?>">C1
+                              </td>
+                              <td>
+                                <input type="radio" value="C2" name="<?php echo "seat1".$count; ?>">C2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="C3" name="<?php echo "seat1".$count; ?>">C3
+                              </td>
+                              <td>
+                                <input type="radio" value="C4" name="<?php echo "seat1".$count; ?>">C4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="D1" name="<?php echo "seat1".$count; ?>">D1
+                              </td>
+                              <td>
+                                <input type="radio" value="D2" name="<?php echo "seat1".$count; ?>">D2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="D3" name="<?php echo "seat1".$count; ?>">D3
+                              </td>
+                              <td>
+                                <input type="radio" value="D4" name="<?php echo "seat1".$count; ?>">D4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="E1" name="<?php echo "seat1".$count; ?>">E1
+                              </td>
+                              <td>
+                                <input type="radio" value="E2" name="<?php echo "seat1".$count; ?>">E2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="E3" name="<?php echo "seat1".$count; ?>">E3
+                              </td>
+                              <td>
+                                <input type="radio" value="E4" name="<?php echo "seat1".$count; ?>">E4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="F1" name="<?php echo "seat1".$count; ?>">F1
+                              </td>
+                              <td>
+                                <input type="radio" value="F2" name="<?php echo "seat1".$count; ?>">F2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="F3" name="<?php echo "seat1".$count; ?>">F3
+                              </td>
+                              <td>
+                                <input type="radio" value="F4" name="<?php echo "seat1".$count; ?>">F4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="G1" name="<?php echo "seat1".$count; ?>">G1
+                              </td>
+                              <td>
+                                <input type="radio" value="G2" name="<?php echo "seat1".$count; ?>">G2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="G3" name="<?php echo "seat1".$count; ?>">G3
+                              </td>
+                              <td>
+                                <input type="radio" value="G4" name="<?php echo "seat1".$count; ?>">G4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="H1" name="<?php echo "seat1".$count; ?>">H1
+                              </td>
+                              <td>
+                                <input type="radio" value="H2" name="<?php echo "seat1".$count; ?>">H2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="H3" name="<?php echo "seat1".$count; ?>">H3
+                              </td>
+                              <td>
+                                <input type="radio" value="H4" name="<?php echo "seat1".$count; ?>">H4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="I1" name="<?php echo "seat1".$count; ?>">I1
+                              </td>
+                              <td>
+                                <input type="radio" value="I2" name="<?php echo "seat1".$count; ?>">I2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="I3" name="<?php echo "seat1".$count; ?>">I3
+                              </td>
+                              <td>
+                                <input type="radio" value="I4" name="<?php echo "seat1".$count; ?>">I4
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <input type="radio" value="J1" name="<?php echo "seat1".$count; ?>">J1
+                              </td>
+                              <td>
+                                <input type="radio" value="J2" name="<?php echo "seat1".$count; ?>">J2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="J3" name="<?php echo "seat1".$count; ?>">J3
+                              </td>
+                              <td>
+                                <input type="radio" value="J4" name="<?php echo "seat1".$count; ?>">J4
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <input type="radio" value="K1" name="<?php echo "seat1".$count; ?>">K1
+                              </td>
+                              <td>
+                                <input type="radio" value="K2" name="<?php echo "seat1".$count; ?>">K2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="K3" name="<?php echo "seat1".$count; ?>">K3
+                              </td>
+                              <td>
+                                <input type="radio" value="K4" name="<?php echo "seat1".$count; ?>">K4
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <input type="radio" value="L1" name="<?php echo "seat1".$count; ?>">L1
+                              </td>
+                              <td>
+                                <input type="radio" value="L2" name="<?php echo "seat1".$count; ?>">L2
+                              </td>
+                              <td width="100px">
+                                
+                              </td>
+                              <td>
+                                <input type="radio" value="L3" name="<?php echo "seat1".$count; ?>">L3
+                              </td>
+                              <td>
+                                <input type="radio" value="L4" name="<?php echo "seat1".$count; ?>">L4
+                              </td>
+                            </tr>
+                          </table>
+                      </div>
+                      <div class="col-md-3">
+                        &nbsp;  
+                      </div>
+                  </div> <!--end of tab-pane active -->
+                  <?php
+                  }
+                  ?>
+                </div> 
+                <div class="col-md-4">&nbsp;</div>
+                <div class="col-md-4"><input type="submit" name="chooseseatbutton" value="Continue Next Step" class="btn btn-info" style="margin-top:10px;"></div>
+                <div class="col-md-4">&nbsp;</div> 
+          </div>
+        </form>
+        
+        <?php
+        }
+        ?>
         <script src="bootstrap/jquery/jquery.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-formhelpers.css">
@@ -594,7 +889,7 @@ session_start();
         <link rel="stylesheet" href="bootstrap/css/bootstrap-datepicker3.css"/>
         <link rel="stylesheet" type="text/css" href="css/numberspinner.css">
         <script src="js/numberspinner.js"></script>  
-    </div>
+    </div> <!--end of div class="col-md-8" -->
     <div class="col-md-2">&nbsp;</div>
     
 
